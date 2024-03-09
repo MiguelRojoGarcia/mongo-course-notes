@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+
+  #mongo_course_python
+  mongo_course_python:
+    container_name: 'mongo_course_python'
+    build:
+      context: .
+    restart: always
+    tty: true
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    networks:
+      - mongo_course_network
+
+  #mongo_course_database
+  mongo_course_database:
+    container_name: mongo_course_database
+    build:
+      context: docker/mongo
+    restart: unless-stopped
+    tty: true
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    volumes:
+      - ./docker/mongo/data:/data/db
+    networks:
+      - mongo_course_network
+
+#Docker Networks
+networks:
+  mongo_course_network:
+    name: mongo_course_network

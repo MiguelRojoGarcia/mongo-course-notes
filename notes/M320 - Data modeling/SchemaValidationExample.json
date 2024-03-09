@@ -1,0 +1,73 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "MyCollectionName Object Validation",
+    "additionalProperties": false,
+    "required": [
+      "_id",
+      "address",
+      "major",
+      "name",
+      "year",
+       "status"
+    ],
+    "properties": {
+      "name": {
+        "bsonType": "string",
+        "description": "'name' must be a string and is required"
+      },
+      "hobbies": {
+        "bsonType": "array",
+        "description": "'hobbies' must be an array of strings",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "bsonType": "string"
+        }
+      },
+      "year": {
+        "bsonType": "int",
+        "minimum": 2017,
+        "maximum": 3017,
+        "description": "'year' must be an integer in [ 2017, 3017 ] and is required"
+      },
+      "address": {
+        "bsonType": "object",
+        "description": "'address' must be an object",
+        "required": [
+          "address",
+          "cp"
+        ],
+        "properties": {
+          "address": {
+            "bsonType": "string",
+            "description": "'address' must be a string and is required"
+          },
+          "cp": {
+            "bsonType": "int",
+            "description": "'cp' must be an int and is required"
+          },
+          "province": {
+            "bsonType": "objectId",
+            "description": "'province' must be an objectId"
+          },
+          "city": {
+            "bsonType": "objectId",
+            "description": "'province' must be an objectId"
+          }
+        }
+      },
+      "gpa": {
+        "bsonType": [
+          "double"
+        ],
+        "description": "'gpa' must be a double if the field exists"
+      },
+      "status":{
+         "enum": ["ACTIVE","INACTIVE"],
+         "description": "'status' must be a string and only can be 'ACTIVE', 'INACTIVE'"
+      }
+    }
+  }
+}
+
