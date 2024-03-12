@@ -18,7 +18,7 @@ Una vez obtenidos los indices candidatos, lanza varios planes de consulta (query
 es el índice candiatos a ser finalista. Este proceso se queda cacheado hasta cierto tiempo o hasta que se actualice el valor de los 
 índices.
 
-Es posible saltate dicho analisis usando el operador ``` $hint(index:1) ``` , aunque no es recomendable.
+Es posible saltarse dicho analisis usando el operador ``` $hint(index:1) ``` , aunque no es recomendable.
 
 
 ### ¿Cuando debemos o no de usar índices (Libro)?
@@ -41,7 +41,7 @@ el "COLLSCAN"
   
   Por ejemplo:
   
-  Ídice compuesto : 
+  Índice compuesto : 
   
   ``` db.collection.createIndex(email:1,username:-1,card_number:1) ``` 
   
@@ -49,7 +49,7 @@ el "COLLSCAN"
   
   Nuestro prefijo sería el email ya que es el primer campo de nuestro indice compuesto.
   
-  Existe una limitación con respecto a los indices compuestos y es que unicamente solo puede haber un Multikey index por 
+  Existe una limitación con respecto a los indices compuestos y es que únicamente solo puede haber un Multikey index por 
   Compound index.
   
   Por ejemplo:
@@ -62,22 +62,17 @@ el "COLLSCAN"
   - Sort (Evitamos que se tenga que hacer un SORT en memoria)
   - Range 
 
-- ïndice construido por los valores de un array (Multikey indexes). 
+- Índice construido por los valores de un array (Multikey indexes). 
   
   Internamente mongo descompone el array y crea por cada elemento un indice de un solo campo. El array puede contener objetos o valores escalares (string , int...)
-
-  Este tipo de índice no es recomendable ya que son menos eficientes que los otros.
-
+  Este tipo de índice no es recomendable ya que son menos eficientes.
 
 Nota del libro: Los Indices parciales (Partial indexes) nos permites configurar un indice que unicamente sea usado si se cumple un criterio
 establecido en el momento de la creación del índice.
 
 ``` 
-
 db.restaurants.createIndex({ cuisine: 1, name: 1 },{ partialFilterExpression: { rating: { $gt: 5 } } })
-  
 db.users.createIndex({ email: 1 },{ partialFilterExpression: { $exist: true } })  
-  
 ```
 
 Más docu : https://www.mongodb.com/docs/manual/core/index-partial/
@@ -108,6 +103,7 @@ Ejemplo:
 Pero no : 
 
 ``` db.collection.createIndex(field_1:1,field_2:-1) ``` -> ``` db.collection.createIndex(field_1:-1,field_2:-1) ```
+
 En este caso se tendrá que crear el mismo filtro pero con sort diferente.
 
 Mongo hará un uso optimizado de estos indices si ordenamos siempre de forma ASC field_1 , pero podemos alternar el orden de field_2
@@ -138,7 +134,7 @@ que nos puede indicar lo siguiente :
 
 - COLLSCAN: La consulta no ha usado indices por lo que ha realizado una búsqueda secuencial.
 
-- FETCH: Los documentos has sido leidos desde la colección.
+- FETCH: Los documentos han sido leidos desde la colección.
 
 - SORT: Los documentos han sido ordenados en memoria y no directamente usando los índices. Intentaremos evitar este caso mejorando el diseño de nuestros índices.
     
