@@ -21,12 +21,29 @@ es el índice candiatos a ser finalista. Este proceso se queda cacheado hasta ci
 Es posible saltarse dicho analisis usando el operador ``` $hint(index:1) ``` , aunque no es recomendable.
 
 
+
 ### ¿Cuando debemos o no de usar índices (Libro)?
 
 Los indices son efectivos, cuando el tamaño de datos a devolver es pequeño. En caso de que los datos a devolver sean lotes,
 grandes, no son eficientes ya que la búsqueda por indices primero tiene que consultar la tabla de indices, que puede ser enorme y luego
 con los datos obteneidos de la tabla de indices buscar en la colección , que de igual manera es gigantesca. En este caso es más efectivo
 el "COLLSCAN"
+
+Algunas recomendaciones de cuando usar índices:
+
+- Cuando un campo de nuestra colección es usualmente usado para realizar búsquedas (dni,email,...)
+- Usaremos índices compuestos, cuando hagamos consultas de forma habitual sobre un campo y sobre otro campo. No es necesario
+  crear dons single-index para cada uno, sabiendo que en la mayoría de los casos, vamos a usar ambos campos en nuestras búsquedas.
+  
+  Ejemplo:  
+  
+  Índice A : { x: 1, y: 1, z: 1 } -> Da soporte a { x: 1 }  , { x: 1, y: 1 }
+
+- Cuando creemos índice de tipo texto, no olvidemos establecer un "collation" para que el engine sepa que estrategía seguir a la
+  hora de comparar cadenas de texto.
+
+
+
 
 
 ### Tipos de índices
@@ -69,6 +86,8 @@ el "COLLSCAN"
 
 Nota del libro: Los Indices parciales (Partial indexes) nos permites configurar un indice que unicamente sea usado si se cumple un criterio
 establecido en el momento de la creación del índice.
+
+Nota curso: Podemos crear índices dentro de un array de objetos.
 
 ``` 
 db.restaurants.createIndex({ cuisine: 1, name: 1 },{ partialFilterExpression: { rating: { $gt: 5 } } })
@@ -150,7 +169,6 @@ a realizar búsquedas de igualdad o aquellos campos que van a ser más selectivo
 
 Nota del libro: Con respecto a la cardinalidad de nuestros índices, daremos preferencia a los campos que nos permitan obtener una alta
 cardinalidad, es decir que pueden ser mas selectivos.
-
 
 ### Operadores no eficientes
 
