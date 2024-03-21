@@ -25,12 +25,15 @@ services:
     tty: true
     env_file:
       - .env
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     ports:
-      - 27017:27017
+      - 27018:27017
     volumes:
       - ./docker/mongo/data:/data/db
     networks:
       - mongo_course_network
+    command: [ "--replSet", "rs0" ]
 
 #Docker Networks
 networks:
