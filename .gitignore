@@ -1,2 +1,6 @@
 .idea
 /venv/
+/docker/mongo/data/
+/.env
+/docker/mongo/rs_keyfile
+/docker/mongo/setup/rs_keyfile

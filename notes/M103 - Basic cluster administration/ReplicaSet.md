@@ -34,7 +34,12 @@ Notas adicionales:
 - Si queremos que uno de nuestros nodos secundarios realice operaciones de lectura, debemos de indicárselo con el siguiente comando:
     
     ``` db.getMongo().setReadPref("secondary") ```
-    
-    Esto nos permitirá habilitar el nodo secundario como nodo de lectura.
+
+- Esto nos permitirá habilitar el nodo secundario como nodo de lectura.
 
 
+Notas sobre la práctica:
+
+Al apagar el servidor primario, auntomáticamente un Rx ha pasado a ser primario. Al volverse primario, Rx acepta tanto las 
+operaciones de lectura como las de escritura. Al volver a levantar el primario, Rx a vuelto a ser secundario y se le ha 
+revocado los permisos de escritura. El servidor primario ha recuperado los datos que fueron insertados desde Rx

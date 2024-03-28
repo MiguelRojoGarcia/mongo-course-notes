@@ -2,23 +2,9 @@ version: '3.7'
 
 services:
 
-  #mongo_course_python
-  mongo_course_python:
-    container_name: 'mongo_course_python'
-    build:
-      context: .
-    restart: always
-    tty: true
-    env_file:
-      - .env
-    volumes:
-      - ./:/app
-    networks:
-      - mongo_course_network
-
-  #mongo_course_database
-  mongo_course_database:
-    container_name: mongo_course_database
+  #mongo_course_database_master
+  mongo_course_database_master:
+    container_name: 'mongo_course_database_master'
     build:
       context: docker/mongo
     restart: unless-stopped
@@ -26,15 +12,62 @@ services:
     env_file:
       - .env
     environment:
-      MONGO_INITDB_DATABASE: MongoCourse
+      MONGO_INITDB_DATABASE: $MONGO_INITDB_DATABASE
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+    ports:
+      - 27017:27017
+    volumes:
+      - ./docker/mongo/data/master:/data/db
+      - ./docker/mongo/setup/rs_keyfile:/etc/mongodb/pki/keyfile
+      - ./docker/mongo/setup/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - mongo_course_network
+    command: [ "--replSet", "rs1","--keyFile", "/etc/mongodb/pki/keyfile"]
+
+  #mongo_course_database_replica_1
+  mongo_course_database_replica_1:
+    container_name: 'mongo_course_database_replica_1'
+    build:
+      context: docker/mongo
+    restart: unless-stopped
+    tty: true
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_DATABASE: $MONGO_INITDB_DATABASE
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
     ports:
       - 27018:27017
     volumes:
-      - ./docker/mongo/data:/data/db
-      - ./docker/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./docker/mongo/data/replica_1:/data/db
+      - ./docker/mongo/setup/rs_keyfile:/etc/mongodb/pki/keyfile
     networks:
       - mongo_course_network
-    command: [ "--replSet", "rs0" ]
+    command: [ "--replSet", "rs1","--keyFile", "/etc/mongodb/pki/keyfile"]
+
+  #mongo_course_database_replica_2
+  mongo_course_database_replica_2:
+    container_name: 'mongo_course_database_replica_2'
+    build:
+      context: docker/mongo
+    restart: unless-stopped
+    tty: true
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_DATABASE: $MONGO_INITDB_DATABASE
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+    ports:
+      - 27019:27017
+    volumes:
+      - ./docker/mongo/data/replica_2:/data/db
+      - ./docker/mongo/setup/rs_keyfile:/etc/mongodb/pki/keyfile
+    networks:
+      - mongo_course_network
+    command: [ "--replSet", "rs1","--keyFile", "/etc/mongodb/pki/keyfile" ]
 
 #Docker Networks
 networks:
